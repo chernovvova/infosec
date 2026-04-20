@@ -4,7 +4,7 @@ import random
 def mod_inverse(a, p):
     """Алгоритм Евклида, нахождение обратного элемента по модулю"""
     if a == 0:
-        raise ZeroDivisionError("Для 0 нет обратного элемента")
+        raise ValueError("Для 0 нет обратного элемента")
 
     t, new_t = 0, 1
     r, new_r = p, a
