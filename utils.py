@@ -73,3 +73,70 @@ def next_prime(n: int) -> int:
         if miller_rabin(candidate):
             return candidate
         candidate += 2
+
+
+def mod_inv(a, p):
+    # обратный элемент в GF(p), p — простое
+    # a != 0 mod p
+    return pow(a, p - 2, p)
+
+
+def mod_gauss_method(A, b, p):
+    """
+    Решает A x = b над GF(p)
+    Возвращает:
+        x        — частное решение (список длины n) или None, если нет решений
+        pivots   — список индексов ведущих столбцов
+    """
+    # копии, всё сразу нормализуем
+    A = [row[:] for row in A]
+    b = b[:]
+    m, n = len(A), len(A[0])
+
+    # расширенная матрица
+    aug = [A[i] + [b[i]] for i in range(m)]
+
+    row = 0
+    pivots = []
+
+    for col in range(n):
+        # 1. поиск pivot
+        pivot = None
+        for r in range(row, m):
+            if aug[r][col] % p != 0:
+                pivot = r
+                break
+        if pivot is None:
+            continue
+
+        # 2. swap
+        aug[row], aug[pivot] = aug[pivot], aug[row]
+
+        # 3. нормализация строки (делаем pivot = 1)
+        inv = mod_inv(aug[row][col] % p, p)
+        for j in range(col, n + 1):
+            aug[row][j] = (aug[row][j] * inv) % p
+
+        # 4. обнуление остальных строк
+        for r in range(m):
+            if r != row and aug[r][col] % p != 0:
+                factor = aug[r][col] % p
+                for j in range(col, n + 1):
+                    aug[r][j] = (aug[r][j] - factor * aug[row][j]) % p
+
+        pivots.append(col)
+        row += 1
+        if row == m:
+            break
+
+    # 5. проверка на несовместность
+    for r in range(row, m):
+        if all(aug[r][c] % p == 0 for c in range(n)) and aug[r][n] % p != 0:
+            return None, pivots  # нет решений
+
+    # 6. восстановление решения (свободные переменные = 0)
+    x = [0] * n
+    for r, col in enumerate(pivots):
+        x[col] = aug[r][n] % p
+
+    return x, pivots

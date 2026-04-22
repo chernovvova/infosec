@@ -1,10 +1,10 @@
 from typing import Generic, TypeVar, Sequence
 
-from entities.base import BaseMathEntity
+from entities.base import MathField
 
-T = TypeVar('T', bound=BaseMathEntity)
+T = TypeVar('T', bound=MathField)
 
-class Polynomial(BaseMathEntity, Generic[T]):
+class Polynomial(MathField, Generic[T]):
 
     def __init__(self, coefficients: list[T | None]) -> None:
         if any(elem is None for elem in coefficients):

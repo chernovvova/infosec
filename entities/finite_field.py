@@ -1,8 +1,8 @@
-from entities.base import BaseMathEntity
+from entities.base import MathField
 from utils import mod_inverse, quick_pow
 
 
-class Zp(BaseMathEntity):
+class Zp(MathField):
 
     def __init__(self, value: int, p: int) -> None:
         self.value = value % p
@@ -38,7 +38,7 @@ class Zp(BaseMathEntity):
         return self.p == other.p and self.value == other.value
 
     @staticmethod
-    def zero(p: int = 1) -> 'Zp':
+    def zero(p: int | None = None) -> 'Zp':
         return Zp(0, p)
 
     def __str__(self) -> str:
