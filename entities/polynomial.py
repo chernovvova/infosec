@@ -54,9 +54,11 @@ class Polynomial(MathField, Generic[T]):
         result.remove_leading_zeros()
         return result
 
+    def __truediv__(self, other: 'Polynomial[T]') -> 'Polynomial[T]':
+        raise NotImplementedError
+
     def scale(self, other: T) -> 'Polynomial[T]':
         return Polynomial([c * other for c in self.coefficients])
-
 
     def __eq__(self, other: 'Polynomial[T]') -> bool:
         if len(self.coefficients) != len(other.coefficients):
@@ -78,7 +80,7 @@ class Polynomial(MathField, Generic[T]):
         return result
 
     def remove_leading_zeros(self) -> None:
-        zero = type(self.coefficients[0]).zero(p=self.coefficients[0].p)
+        zero = self.coefficients[0].get_zero()
         while len(self.coefficients) > 0 and self.coefficients[-1] == zero:
             self.coefficients.pop()
         return None

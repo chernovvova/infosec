@@ -35,11 +35,15 @@ class Zp(MathField):
         return Zp(mod_inverse(self.value, self.p), self.p)
 
     def __eq__(self, other: 'Zp') -> bool:
-        return self.p == other.p and self.value == other.value
+        self.check_p(other)
+        return self.value == other.value
 
-    @staticmethod
-    def zero(p: int | None = None) -> 'Zp':
-        return Zp(0, p)
+    def __ne__(self, other: 'Zp') -> bool:
+        self.check_p(other)
+        return self.value != other.value
+
+    def get_zero(self: 'Zp') -> 'Zp':
+        return Zp(0, self.p)
 
     def __str__(self) -> str:
         return str(self.value)
