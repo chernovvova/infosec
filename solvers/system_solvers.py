@@ -16,13 +16,11 @@ class SystemSolver(Generic[T]):
 
         zero = a[0][0].get_zero()
 
-        # расширенная матрица
         mat = [a[i][:] + [b[i]] for i in range(m)]
 
         pivots = []
         row = 0
 
-        # forward elimination
         for col in range(n):
             pivot = None
 
@@ -36,14 +34,12 @@ class SystemSolver(Generic[T]):
 
             mat[row], mat[pivot] = mat[pivot], mat[row]
 
-            # нормализация pivot-строки
+
             pivot_val = mat[row][col]
-            inv = pivot_val.inverse()  # через поле
 
             for j in range(col, n + 1):
-                mat[row][j] = mat[row][j] * inv
+                mat[row][j] = mat[row][j] / pivot_val
 
-            # обнуление НИЖЕ pivot
             for r in range(row + 1, m):
                 factor = mat[r][col]
                 if factor != zero:

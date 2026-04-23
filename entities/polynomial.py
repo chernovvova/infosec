@@ -9,7 +9,7 @@ class Polynomial(Generic[T]):
     def __init__(self, coefficients: list[T | None]) -> None:
         if any(elem is None for elem in coefficients):
             raise ValueError('Коэффициенты не могут быть None')
-        self.coefficients = coefficients
+        self.coefficients = coefficients.copy()
 
     def __add__(self, other: 'Polynomial[T]') -> 'Polynomial[T]':
         a = self.coefficients.copy()
@@ -87,3 +87,6 @@ class Polynomial(Generic[T]):
 
     def __str__(self) -> str:
         return f'[{", ".join(str(coef) for coef in self.coefficients)}]'
+
+    def __repr__(self) -> str:
+        return self.__str__()
