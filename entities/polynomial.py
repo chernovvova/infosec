@@ -4,7 +4,7 @@ from entities.base import MathField
 
 T = TypeVar('T', bound=MathField)
 
-class Polynomial(MathField, Generic[T]):
+class Polynomial(Generic[T]):
 
     def __init__(self, coefficients: list[T | None]) -> None:
         if any(elem is None for elem in coefficients):

@@ -140,3 +140,44 @@ def mod_gauss_method(A, b, p):
         x[col] = aug[r][n] % p
 
     return x, pivots
+
+
+def matrix_production(A, B):
+    m, k = len(A), len(A[0])
+
+    # определяем: матрица или вектор
+    is_matrix = isinstance(B[0], (list, tuple))
+    if is_matrix:
+        zero = B[0][0].get_zero()
+    else:
+        zero = B[0].get_zero()
+
+    if is_matrix:
+        k2, n = len(B), len(B[0])
+        if k != k2:
+            raise ValueError("Incompatible matrix sizes")
+
+        C = [[zero for _ in range(n)] for _ in range(m)]
+
+        for i in range(m):
+            for t in range(k):
+                a_it = A[i][t]
+                for j in range(n):
+                    C[i][j] = C[i][j] + a_it * B[t][j]
+
+        return C
+
+    else:
+        # B — вектор
+        if len(B) != k:
+            raise ValueError("Incompatible matrix-vector sizes")
+
+        result = [zero for _ in range(m)]
+
+        for i in range(m):
+            s = zero
+            for j in range(k):
+                s = s + A[i][j] * B[j]
+            result[i] = s
+
+        return result
