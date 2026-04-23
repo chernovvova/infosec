@@ -52,12 +52,10 @@ class SystemSolver(Generic[T]):
             if row == m:
                 break
 
-        # проверка несовместности
         for r in range(row, m):
             if all(mat[r][c] == zero for c in range(n)) and mat[r][n] != zero:
                 return None, pivots
 
-        # back substitution
         x = [zero for _ in range(n)]
 
         for i in reversed(range(len(pivots))):

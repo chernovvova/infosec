@@ -1,4 +1,4 @@
-from typing import TypeVar, Generic
+from typing import TypeVar, Generic, overload
 
 from entities.base import MathField
 
@@ -6,16 +6,20 @@ T = TypeVar('T', bound=MathField)
 
 class Matrix(Generic[T]):
 
-    def __init__(self, elements: list[list[T]] | list[T]) -> None:
-        self_elements = []
+    @overload
+    def __init__(self, elements: list[list[T]]) -> None: ...
+
+    @overload
+    def __init__(self, elements: list[T]) -> None: ...
+
+    def __init__(self, elements) -> None:
         if isinstance(elements[0], list):
-            for i in range(len(elements)):
-                self_elements.append(elements[i].copy())
+            self.elements = [row.copy() for row in elements]
         else:
-            self_elements = [[element] for element in elements]
-        self.elements = self_elements
-        self.rows = len(self_elements)
-        self.cols = len(self_elements[0])
+            self.elements = [[element] for element in elements]
+
+        self.rows = len(elements)
+        self.cols = len(elements[0])
 
     def check_sizes(self, other: 'Matrix[T]') -> None:
         if self.rows != other.rows or self.cols != other.cols:
@@ -26,7 +30,7 @@ class Matrix(Generic[T]):
 
     def __add__(self, other: 'Matrix[T]') -> 'Matrix[T]':
         self.check_sizes(other)
-        sum_elements = []
+        sum_elements: list[list[T]] = []
         for i in range(self.rows):
             sum_elements.append([])
             for j in range(self.cols):
@@ -35,7 +39,7 @@ class Matrix(Generic[T]):
 
     def __sub__(self, other: 'Matrix[T]') -> 'Matrix[T]':
         self.check_sizes(other)
-        sub_elements = []
+        sub_elements: list[list[T]] = []
         for i in range(self.rows):
             sub_elements.append([])
             for j in range(self.cols):

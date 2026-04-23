@@ -24,10 +24,14 @@ class R(MathField):
     def inverse(self) -> 'R':
         return R(1 / self.value)
 
-    def __eq__(self, other: 'R') -> bool:
+    def __eq__(self, other: object) -> bool:
+        if type(other) is not R:
+            raise NotImplementedError
         return self.value == other.value
 
-    def __ne__(self, other: 'R') -> bool:
+    def __ne__(self, other: object) -> bool:
+        if type(other) is not R:
+            raise NotImplementedError
         return self.value != other.value
 
     def get_zero(self: 'R') -> 'R':

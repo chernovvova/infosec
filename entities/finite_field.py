@@ -34,11 +34,15 @@ class Zp(MathField):
     def inverse(self) -> 'Zp':
         return Zp(mod_inverse(self.value, self.p), self.p)
 
-    def __eq__(self, other: 'Zp') -> bool:
+    def __eq__(self, other: object) -> bool:
+        if type(self) != type(other):
+            raise NotImplementedError
         self.check_p(other)
         return self.value == other.value
 
-    def __ne__(self, other: 'Zp') -> bool:
+    def __ne__(self, other: object) -> bool:
+        if type(self) != type(other):
+            raise NotImplementedError
         self.check_p(other)
         return self.value != other.value
 

@@ -6,9 +6,9 @@ T = TypeVar('T', bound=MathField)
 
 class Polynomial(Generic[T]):
 
-    def __init__(self, coefficients: list[T | None]) -> None:
-        if any(elem is None for elem in coefficients):
-            raise ValueError('Коэффициенты не могут быть None')
+    coefficients: list[T]
+
+    def __init__(self, coefficients: list[T]) -> None:
         self.coefficients = coefficients.copy()
 
     def __add__(self, other: 'Polynomial[T]') -> 'Polynomial[T]':
@@ -40,7 +40,7 @@ class Polynomial(Generic[T]):
         return result
 
     def __mul__(self, other: 'Polynomial[T]') -> 'Polynomial[T]':
-        product = [None] * (len(self.coefficients) - 1 + len(other.coefficients))
+        product = [self.coefficients[0].get_zero()] * (len(self.coefficients) - 1 + len(other.coefficients))
 
         for i in range(len(self.coefficients)):
             for j in range(len(other.coefficients)):
@@ -50,7 +50,7 @@ class Polynomial(Generic[T]):
                 else:
                     product[i + j] += element_production
 
-        result = Polynomial(coefficients=product)
+        result = Polynomial(product)
         result.remove_leading_zeros()
         return result
 
@@ -60,7 +60,10 @@ class Polynomial(Generic[T]):
     def scale(self, other: T) -> 'Polynomial[T]':
         return Polynomial([c * other for c in self.coefficients])
 
-    def __eq__(self, other: 'Polynomial[T]') -> bool:
+    def __eq__(self, other: object) -> bool:
+        if type(other) is not Polynomial:
+            raise NotImplementedError
+
         if len(self.coefficients) != len(other.coefficients):
             return False
 
@@ -69,14 +72,23 @@ class Polynomial(Generic[T]):
                 return False
         return True
 
-    def evaluate(self, x: T) -> T:
-        result = None
+    def __ne__(self, other: object) -> bool:
+        if type(other) is not Polynomial:
+            raise NotImplementedError
+
+        if len(self.coefficients) != len(other.coefficients):
+            return False
 
         for i in range(len(self.coefficients)):
-            if result is None:
-                result = self.coefficients[i] * (x ** i)
-            else:
-                result += self.coefficients[i] * (x ** i)
+            if self.coefficients[i] != other.coefficients[i]:
+                return True
+        return False
+
+    def evaluate(self, x: T) -> T:
+        result = self.coefficients[0].get_zero()
+
+        for i in range(len(self.coefficients)):
+            result += self.coefficients[i] * (x ** i)
         return result
 
     def remove_leading_zeros(self) -> None:
